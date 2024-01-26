@@ -32,7 +32,7 @@ const SearchBox: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4">
+    <div className="max-w-md mx-auto mt-4">
       <input
         type="text"
         value={searchQuery}
