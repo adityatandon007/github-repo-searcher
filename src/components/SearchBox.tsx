@@ -13,10 +13,25 @@ const SearchBox: React.FC = () => {
   const [page, setPage] = useState(1);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Custom debounce function
+  const debounce = (func: Function, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+
+    return (...args: any[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
+
+  // Debounced fetch function
+  const debouncedFetch = debounce((query: string, page: number) => {
+    // @ts-ignore
+    dispatch(fetchRepositories(query, page));
+  }, 500);
+
   useEffect(() => {
     if (searchQuery.trim() !== '') {
-      // @ts-ignore
-      dispatch(fetchRepositories(searchQuery, page));
+      debouncedFetch(searchQuery, page);
     }
   }, [searchQuery, page, dispatch]);
 
