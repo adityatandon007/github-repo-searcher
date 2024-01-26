@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import { setSearchQuery, fetchRepositories, setSelectedRepository, Repository } from '../features/githubSlice';
@@ -13,21 +13,14 @@ const SearchBox: React.FC = () => {
   const [page, setPage] = useState(1);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Custom debounce function
-  const debounce = (func: Function, delay: number) => {
-    let timeoutId: NodeJS.Timeout;
-
-    return (...args: any[]) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => func(...args), delay);
-    };
-  };
-
-  // Debounced fetch function
-  const debouncedFetch = debounce((query: string, page: number) => {
-    // @ts-ignore
-    dispatch(fetchRepositories(query, page));
-  }, 500);
+  // Custom debounce function using useCallback
+  const debouncedFetch = useCallback(
+    debounce((query: string, page: number) => {
+      // @ts-ignore
+      dispatch(fetchRepositories(query, page));
+    }, 500),
+    [dispatch]
+  );
 
   useEffect(() => {
     if (searchQuery.trim() !== '') {
@@ -86,3 +79,13 @@ const SearchBox: React.FC = () => {
 };
 
 export default SearchBox;
+
+// Debounce function
+const debounce = (func: Function, delay: number) => {
+  let timeoutId: NodeJS.Timeout;
+
+  return (...args: any[]) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  };
+};
