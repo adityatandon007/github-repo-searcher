@@ -58,7 +58,6 @@ const SearchBox: React.FC = () => {
         placeholder="Search repositories"
         className="w-full p-2 border rounded"
       />
-      {loading && <p className="mt-2">Loading...</p>}
       <div
         ref={dropdownRef}
         onScroll={handleDropdownScroll}
@@ -73,6 +72,7 @@ const SearchBox: React.FC = () => {
             {repo.name}
           </div>
         ))}
+        {loading && <p className="mt-2 text-center">Loading...</p>}
       </div>
     </div>
   );
