@@ -26,6 +26,17 @@ const SearchBox: React.FC = () => {
     setPage(1);
   };
 
+  const handleDropdownScroll = () => {
+    if (dropdownRef.current) {
+      const isScrolledToBottom =
+        dropdownRef.current.scrollHeight - dropdownRef.current.scrollTop === dropdownRef.current.clientHeight;
+
+      if (isScrolledToBottom && repositories.length >= 8) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    }
+  };
+
   const handleRepositorySelect = (selectedRepo: Repository) => {
     // Set the selected repository in the state
     dispatch(setSelectedRepository(selectedRepo));
@@ -43,6 +54,7 @@ const SearchBox: React.FC = () => {
       {loading && <p className="mt-2">Loading...</p>}
       <div
         ref={dropdownRef}
+        onScroll={handleDropdownScroll}
         className="mt-2 max-h-40 overflow-y-auto border rounded"
       >
         {repositories.map((repo) => (

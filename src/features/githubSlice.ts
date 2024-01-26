@@ -30,8 +30,7 @@ const githubSlice = createSlice({
       state.searchQuery = action.payload;
     },
     setRepositories: (state, action: PayloadAction<Repository[]>) => {
-      state.repositories = action.payload;
-      state.loading = false;
+      state.repositories = state.repositories.length > 0 ? [...state.repositories, ...action.payload] : action.payload;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -55,5 +54,7 @@ export const fetchRepositories = (query: string, page: number): AppThunk => asyn
     dispatch(setRepositories(data.items));
   } catch (error) {
     console.error('Error fetching repositories:', error);
+  } finally {
+    dispatch(setLoading(false));
   }
 };
