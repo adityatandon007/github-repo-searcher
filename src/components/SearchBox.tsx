@@ -26,12 +26,21 @@ const SearchBox: React.FC = () => {
   };
 
   return (
-    <div>
-      <input type="text" value={searchQuery} onChange={handleInputChange} placeholder="Search repositories" />
-      {loading && <p>Loading...</p>}
-      <div ref={dropdownRef} style={{ maxHeight: '200px', overflowY: 'auto' }}>
+    <div className="max-w-md mx-auto p-4">
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={handleInputChange}
+        placeholder="Search repositories"
+        className="w-full p-2 border rounded"
+      />
+      {loading && <p className="mt-2">Loading...</p>}
+      <div
+        ref={dropdownRef}
+        className="mt-2 max-h-40 overflow-y-auto border rounded"
+      >
         {repositories.map((repo) => (
-          <div key={repo.id}>
+          <div key={repo.id} className="p-2 cursor-pointer hover:bg-gray-200">
             {repo.name}
           </div>
         ))}
