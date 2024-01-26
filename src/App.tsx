@@ -7,8 +7,8 @@ import { RootState } from './app/store';
 const App: React.FC = () => {
   const selectedRepository = useSelector((state: RootState) => state.github.selectedRepository);
   return (
-    <div>
-      <div className="font-bold text-2xl text-center max-w-md mx-auto my-8">Github Searcher</div>
+    <div className="app-container h-screen bg-gradient-to-b from-indigo-500 to-teal-500">
+      <div className="font-bold text-2xl text-center pt-8 mb-8 text-white">Github Searcher</div>
       <SearchBox />
       <Card repository={selectedRepository} />
     </div>
@@ -16,4 +16,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-

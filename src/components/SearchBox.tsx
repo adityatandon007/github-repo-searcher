@@ -83,7 +83,7 @@ const SearchBox: React.FC = () => {
           value={searchQuery}
           onChange={handleInputChange}
           placeholder="Search repositories"
-          className="w-full p-3 border rounded focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300"
+          className="w-full p-3 border rounded-t focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300"
           ref={inputRef}
           onFocus={toggleDropdown}
         />
@@ -91,7 +91,7 @@ const SearchBox: React.FC = () => {
           <div
             ref={dropdownRef}
             onScroll={handleDropdownScroll}
-            className="mt-2 max-h-40 overflow-y-auto border rounded absolute w-full bg-white shadow-md z-10"
+            className="max-h-40 overflow-y-auto border rounded-b absolute w-full bg-white shadow-md z-10"
           >
             {repositories.map((repo) => (
               <div
