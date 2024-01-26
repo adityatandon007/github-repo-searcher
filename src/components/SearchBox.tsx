@@ -11,7 +11,9 @@ const SearchBox: React.FC = () => {
   const selectedRepository = useSelector((state: RootState) => state.github.selectedRepository);
 
   const [page, setPage] = useState(1);
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Custom debounce function using useCallback
   const debouncedFetch = useCallback(
@@ -47,7 +49,38 @@ const SearchBox: React.FC = () => {
 
   const handleRepositorySelect = (selectedRepo: Repository) => {
     dispatch(setSelectedRepository(selectedRepo));
+    // Close the dropdown after selecting a repository
+    setDropdownOpen(false);
   };
+
+  const handleWindowClick = (e: MouseEvent) => {
+    // Check if the click is outside the input and dropdown
+    if (
+      inputRef.current &&
+      !inputRef.current.contains(e.target as Node) &&
+      dropdownRef.current &&
+      !dropdownRef.current.contains(e.target as Node)
+    ) {
+      // Close the dropdown
+      setDropdownOpen(false);
+    }
+  };
+
+  const toggleDropdown = () => {
+    // Toggle the dropdown visibility
+    setDropdownOpen((prev) => !prev);
+  };
+
+
+  useEffect(() => {
+    // Add a click event listener on window
+    window.addEventListener('click', handleWindowClick);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener('click', handleWindowClick);
+    };
+  }, []); 
 
   return (
     <div className="max-w-md mx-auto mt-4">
@@ -57,8 +90,11 @@ const SearchBox: React.FC = () => {
         onChange={handleInputChange}
         placeholder="Search repositories"
         className="w-full p-2 border rounded"
+        ref={inputRef}
+        onFocus={toggleDropdown}
       />
-      <div
+      {isDropdownOpen && (
+        <div
         ref={dropdownRef}
         onScroll={handleDropdownScroll}
         className="mt-2 max-h-40 overflow-y-auto border rounded"
@@ -74,6 +110,7 @@ const SearchBox: React.FC = () => {
         ))}
         {loading && <p className="mt-2 text-center">Loading...</p>}
       </div>
+      )}
     </div>
   );
 };
