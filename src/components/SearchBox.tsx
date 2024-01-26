@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../app/store';
-import { setSearchQuery, fetchRepositories } from '../features/githubSlice';
+import { setSearchQuery, fetchRepositories, setSelectedRepository, Repository } from '../features/githubSlice';
 
 const SearchBox: React.FC = () => {
   const dispatch = useDispatch();
   const searchQuery = useSelector((state: RootState) => state.github.searchQuery);
   const loading = useSelector((state: RootState) => state.github.loading);
   const repositories = useSelector((state: RootState) => state.github.repositories);
+  const selectedRepository = useSelector((state: RootState) => state.github.selectedRepository);
 
   const [page, setPage] = useState(1);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -25,6 +26,11 @@ const SearchBox: React.FC = () => {
     setPage(1);
   };
 
+  const handleRepositorySelect = (selectedRepo: Repository) => {
+    // Set the selected repository in the state
+    dispatch(setSelectedRepository(selectedRepo));
+  };
+
   return (
     <div className="max-w-md mx-auto p-4">
       <input
@@ -40,7 +46,13 @@ const SearchBox: React.FC = () => {
         className="mt-2 max-h-40 overflow-y-auto border rounded"
       >
         {repositories.map((repo) => (
-          <div key={repo.id} className="p-2 cursor-pointer hover:bg-gray-200">
+          <div
+            key={repo.id}
+            onClick={() => handleRepositorySelect(repo)}
+            className={`p-2 cursor-pointer hover:bg-gray-200 ${
+              selectedRepository && selectedRepository.id === repo.id ? 'bg-blue-200' : ''
+            }`}
+          >
             {repo.name}
           </div>
         ))}

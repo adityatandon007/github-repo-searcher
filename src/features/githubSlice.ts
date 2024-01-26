@@ -1,16 +1,25 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../app/store';
 
+export interface Repository {
+  id: number;
+  name: string;
+  description: string;
+  html_url: string;
+}
+
 interface GitHubState {
   searchQuery: string;
-  repositories: any[];
+  repositories: Repository[];
   loading: boolean;
+  selectedRepository: Repository | null;
 }
 
 const initialState: GitHubState = {
   searchQuery: '',
   repositories: [],
   loading: false,
+  selectedRepository: null,
 };
 
 const githubSlice = createSlice({
@@ -20,17 +29,20 @@ const githubSlice = createSlice({
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
     },
-    setRepositories: (state, action: PayloadAction<any[]>) => {
+    setRepositories: (state, action: PayloadAction<Repository[]>) => {
       state.repositories = action.payload;
       state.loading = false;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
+    setSelectedRepository: (state, action: PayloadAction<Repository | null>) => {
+      state.selectedRepository = action.payload;
+    },
   },
 });
 
-export const { setSearchQuery, setRepositories, setLoading } = githubSlice.actions;
+export const { setSearchQuery, setRepositories, setLoading, setSelectedRepository } = githubSlice.actions;
 
 export default githubSlice.reducer;
 
