@@ -8,6 +8,7 @@ const App: React.FC = () => {
   const selectedRepository = useSelector((state: RootState) => state.github.selectedRepository);
   return (
     <div>
+      <div className="font-bold text-2xl text-center max-w-md mx-auto my-8">Github Searcher</div>
       <SearchBox />
       <Card repository={selectedRepository} />
     </div>
