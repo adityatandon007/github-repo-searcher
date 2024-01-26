@@ -33,7 +33,7 @@ const SearchBox: React.FC = () => {
     if (searchQuery.trim() !== '') {
       debouncedFetch(searchQuery, page);
     }
-  }, [searchQuery, page, dispatch]);
+  }, [searchQuery, page, debouncedFetch]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -53,7 +53,6 @@ const SearchBox: React.FC = () => {
   };
 
   const handleRepositorySelect = (selectedRepo: Repository) => {
-    // Set the selected repository in the state
     dispatch(setSelectedRepository(selectedRepo));
   };
 
@@ -76,9 +75,7 @@ const SearchBox: React.FC = () => {
           <div
             key={repo.id}
             onClick={() => handleRepositorySelect(repo)}
-            className={`p-2 cursor-pointer hover:bg-gray-200 ${
-              selectedRepository && selectedRepository.id === repo.id ? 'bg-blue-200' : ''
-            }`}
+            className={`p-2 cursor-pointer hover:bg-gray-200 ${selectedRepository?.id === repo.id ? 'bg-blue-200' : ''}`}
           >
             {repo.name}
           </div>
