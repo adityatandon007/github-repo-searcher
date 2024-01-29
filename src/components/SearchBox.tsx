@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, KeyboardEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import { setSearchQuery, fetchRepositories, setSelectedRepository, setDropdownOpen, Repository } from '../features/githubSlice';
@@ -14,6 +14,7 @@ const SearchBox: React.FC = () => {
   const [page, setPage] = useState(1);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
   // Custom debounce function using useCallback
   const debouncedFetch = useCallback(
@@ -68,6 +69,28 @@ const SearchBox: React.FC = () => {
     dispatch(setDropdownOpen(true));
   };
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (isDropdownOpen && repositories.length > 0) {
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          setFocusedIndex((prevIndex) => (prevIndex !== null ? Math.max(prevIndex - 1, 0) : repositories.length - 1));
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          setFocusedIndex((prevIndex) => (prevIndex !== null ? Math.min(prevIndex + 1, repositories.length - 1) : 0));
+          break;
+        case 'Enter':
+          if (focusedIndex !== null) {
+            handleRepositorySelect(repositories[focusedIndex]);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
   useEffect(() => {
     window.addEventListener('click', handleWindowClick);
 
@@ -87,6 +110,7 @@ const SearchBox: React.FC = () => {
           className="w-full p-3 border rounded-t focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300"
           ref={inputRef}
           onFocus={openDropdown}
+          onKeyDown={handleKeyDown}
         />
         {isDropdownOpen ? (
           <div
@@ -94,18 +118,18 @@ const SearchBox: React.FC = () => {
             onScroll={handleDropdownScroll}
             className="max-h-40 overflow-y-auto border rounded-b absolute w-full bg-white shadow-md z-10"
           >
-            {repositories.map((repo) => (
+            {repositories.length ? repositories.map((repo: Repository, index: number) => (
               <div
                 key={repo.id}
                 onClick={() => handleRepositorySelect(repo)}
-                className={`p-3 cursor-pointer hover:bg-gray-200 ${
+                className={`p-2 cursor-pointer hover:bg-gray-200 ${
                   selectedRepository?.id === repo.id ? 'bg-blue-200' : ''
-                } transition-all duration-300`}
+                } transition-all duration-300 ${index === focusedIndex ? 'bg-gray-200' : ''}`}
               >
                 {repo.name}
               </div>
-            ))}
-            {loading && <p className="mt-2 text-center">Loading...</p>}
+            )): <div>No results found</div>}
+            {loading && page > 1 && <div className="p-2 text-center">Loading...</div>}
           </div>
         ) : null}
       </div>

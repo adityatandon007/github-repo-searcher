@@ -3,10 +3,11 @@ import { Repository } from '../features/githubSlice';
 
 interface CardProps {
   repository: Repository | null;
+  isDropdownOpen: boolean;
 }
 
-const Card: React.FC<CardProps> = ({ repository }) => {
-  if (!repository) {
+const Card: React.FC<CardProps> = ({ repository, isDropdownOpen }) => {
+  if (!repository || isDropdownOpen) {
     return null;
   }
 
