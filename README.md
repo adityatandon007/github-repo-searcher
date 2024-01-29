@@ -7,7 +7,7 @@ A github searcher made with [react](https://react.dev/) and [redux-toolkit](http
 [Github Searcher](https://github-repo-searchbar.netlify.app/)
 
 Screenshot:
-![github repo searcher](github-searcher.png)
+![github repo searcher](github-repo-searcher.png)
 
 ## Project setup
 
