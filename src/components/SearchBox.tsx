@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../app/store';
-import { setSearchQuery, fetchRepositories, setSelectedRepository, Repository } from '../features/githubSlice';
+import { setSearchQuery, fetchRepositories, setSelectedRepository, setDropdownOpen, Repository } from '../features/githubSlice';
 
 const SearchBox: React.FC = () => {
   const dispatch = useDispatch();
@@ -9,9 +9,9 @@ const SearchBox: React.FC = () => {
   const loading = useSelector((state: RootState) => state.github.loading);
   const repositories = useSelector((state: RootState) => state.github.repositories);
   const selectedRepository = useSelector((state: RootState) => state.github.selectedRepository);
+  const isDropdownOpen = useSelector((state: RootState) => state.github.isDropdownOpen);
 
   const [page, setPage] = useState(1);
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -49,7 +49,8 @@ const SearchBox: React.FC = () => {
 
   const handleRepositorySelect = (selectedRepo: Repository) => {
     dispatch(setSelectedRepository(selectedRepo));
-    setDropdownOpen(false);
+    dispatch(setSearchQuery(selectedRepo.name));
+    dispatch(setDropdownOpen(false));
   };
 
   const handleWindowClick = (e: MouseEvent) => {
@@ -59,12 +60,12 @@ const SearchBox: React.FC = () => {
       dropdownRef.current &&
       !dropdownRef.current.contains(e.target as Node)
     ) {
-      setDropdownOpen(false);
+      dispatch(setDropdownOpen(false));
     }
   };
 
-  const toggleDropdown = () => {
-    setDropdownOpen((prev) => !prev);
+  const openDropdown = () => {
+    dispatch(setDropdownOpen(true));
   };
 
   useEffect(() => {
@@ -85,9 +86,9 @@ const SearchBox: React.FC = () => {
           placeholder="Search repositories"
           className="w-full p-3 border rounded-t focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300"
           ref={inputRef}
-          onFocus={toggleDropdown}
+          onFocus={openDropdown}
         />
-        {isDropdownOpen && repositories.length ? (
+        {isDropdownOpen ? (
           <div
             ref={dropdownRef}
             onScroll={handleDropdownScroll}
